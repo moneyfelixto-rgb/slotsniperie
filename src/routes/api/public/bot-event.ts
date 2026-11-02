@@ -41,7 +41,7 @@ export const Route = createFileRoute("/api/public/bot-event")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const secret = process.env.BOT_WEBHOOK_SECRET;
+        const secret = process.env['BOT_WEBHOOK_SECRET'];
         if (!secret) return new Response("Not configured", { status: 503 });
         const raw = await request.text();
         if (raw.length > 20_000) return new Response("Too large", { status: 413 });
@@ -79,7 +79,7 @@ export const Route = createFileRoute("/api/public/bot-event")({
           id, phone: ev.phone, test_centre: ev.centre, test_date: ev.date, test_time: ev.time, reference: ev.reference ?? null,
         });
         if (error) return new Response("DB error", { status: 500 });
-        const base = process.env.PUBLIC_SITE_URL ?? new URL(request.url).origin;
+        const base = process.env['PUBLIC_SITE_URL'] ?? new URL(request.url).origin;
         const payUrl = `${base}/pay/${id}`;
         let whatsapp = "sent";
         try {
