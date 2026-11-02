@@ -15,7 +15,8 @@
  */
 
 @theme inline {
-  --font-sans: "Space Grotesk", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-display: "Barlow Condensed", "Inter", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -147,3 +148,8 @@
 @keyframes pulse-dot { 50% { opacity: 0.35; } }
 @utility blink { animation: pulse-dot 1.6s ease-in-out infinite; }
 body { font-family: var(--font-sans); }
+:root { --gradient-cta: linear-gradient(90deg, oklch(0.64 0.2 35), oklch(0.5 0.22 22)); }
+@utility bg-cta { background-image: var(--gradient-cta); }
+@utility text-cta { background-image: var(--gradient-cta); -webkit-background-clip: text; background-clip: text; color: transparent; }
+@keyframes fade-a { 0%,45% { opacity: 1; } 50%,95% { opacity: 0; } 100% { opacity: 1; } }
+@utility fade-swap { animation: fade-a 16s ease-in-out infinite; }

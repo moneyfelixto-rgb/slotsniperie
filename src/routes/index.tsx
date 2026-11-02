@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import nightVideo from "@/assets/videos/car_night_road.mp4.asset.json";
+import duskVideo from "@/assets/videos/car_country_dusk.mp4.asset.json";
 
 // TODO: replace with the real WhatsApp Business number (international format, digits only)
 const WA_NUMBER = "353000000000";
@@ -27,58 +29,73 @@ const steps = [
 function Index() {
   return (
     <main className="min-h-screen bg-background">
-      <div className="mx-auto flex min-h-screen max-w-md flex-col px-5 py-6">
-        <header className="flex items-center justify-between border-b border-border pb-4">
-          <span className="text-sm font-bold tracking-tight">
-            Slot<span className="text-primary">.</span>Sniper
-          </span>
-          <span className="flex items-center gap-2 rounded-full border border-border px-3 py-1 text-[11px] font-medium text-muted-foreground">
-            <span className="blink size-1.5 rounded-full bg-primary" /> Live · Ireland
-          </span>
-        </header>
+      <section className="relative isolate min-h-screen overflow-hidden">
+        <div className="absolute inset-0 -z-10">
+          <video src={nightVideo.url} autoPlay muted loop playsInline onLoadedMetadata={(e) => (e.currentTarget.playbackRate = 0.6)} className="absolute inset-0 size-full object-cover" />
+          <video src={duskVideo.url} autoPlay muted loop playsInline onLoadedMetadata={(e) => (e.currentTarget.playbackRate = 0.6)} className="fade-swap absolute inset-0 size-full object-cover" />
+          <div className="absolute inset-0 bg-background/75" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-background/70" />
+        </div>
 
-        <section className="flex flex-1 flex-col justify-center py-12">
-          <span className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-            Real-time RSA slot alerts
-          </span>
-          <h1 className="text-[2.5rem] font-bold leading-[1.08] tracking-tight">
-            Get Your Irish Driving Test <span className="text-primary">Next Week.</span> Pay Only When Booked.
-          </h1>
-          <p className="mt-6 text-base leading-relaxed text-muted-foreground">
-            Zero apps to download. Zero upfront fees. Free real-time slot alerts via WhatsApp. Pay €60 only after our bot successfully secures your test slot.
-          </p>
-          <a
-            href={WA_LINK}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="glow mt-8 flex h-16 items-center justify-between rounded-2xl bg-primary px-6 text-lg font-bold text-primary-foreground transition-transform active:scale-[0.98]"
-          >
-            Start Free via WhatsApp <span aria-hidden>→</span>
-          </a>
-          <ul className="mt-6 grid grid-cols-3 gap-2 text-[11px] font-medium text-muted-foreground">
-            {["Pay on success", "RSA compliant flow", "Secure checkout"].map((b) => (
-              <li key={b} className="rounded-xl border border-border bg-card p-3 leading-snug">
-                <span className="text-primary">✓</span> {b}
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section className="rounded-2xl border border-border bg-card p-5">
-          {steps.map(([n, t, d], i) => (
-            <div key={n} className={`flex gap-4 py-4 ${i ? "border-t border-border" : ""}`}>
-              <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">{n}</span>
-              <div>
-                <h2 className="font-bold">{t}</h2>
-                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{d}</p>
+        <div className="mx-auto flex min-h-screen max-w-6xl flex-col px-5 py-5 md:px-10">
+          <header className="flex items-center justify-between">
+            <div className="leading-none">
+              <div className="font-display text-2xl font-bold uppercase tracking-tight">
+                <span className="text-primary">Slot</span> Sniper
               </div>
+              <div className="mt-1 text-[11px] tracking-[0.3em] text-muted-foreground">IRELAND</div>
+            </div>
+            <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="bg-cta glow rounded-full px-5 py-3 text-sm font-semibold tracking-wide text-primary-foreground">
+              WhatsApp
+            </a>
+          </header>
+
+          <div className="flex flex-1 flex-col justify-center py-14">
+            <span className="mb-8 inline-flex w-fit items-center gap-3 rounded-full border border-primary/30 bg-background/40 px-4 py-2 text-sm text-foreground/90 backdrop-blur">
+              <span className="blink size-2 rounded-full bg-primary" /> Real-time RSA slot alerts · Ireland
+            </span>
+            <h1 className="font-display text-6xl font-extrabold uppercase leading-[0.9] tracking-tight md:text-8xl">
+              Your driving test.
+              <br />
+              <span className="text-cta italic">Next week.</span>
+            </h1>
+            <p className="mt-7 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl">
+              Zero apps. Zero upfront fees. Free real-time slot alerts on WhatsApp — pay €60 only after your test slot is secured.
+            </p>
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+              <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="bg-cta glow flex h-16 items-center justify-center gap-3 rounded-full px-8 text-lg font-semibold uppercase tracking-wide text-primary-foreground transition-transform active:scale-[0.98]">
+                Start free via WhatsApp <span aria-hidden>→</span>
+              </a>
+              <a href="#how" className="flex h-16 items-center justify-center rounded-full border border-primary/40 bg-background/40 px-8 text-lg font-semibold uppercase tracking-wide backdrop-blur">
+                How it works
+              </a>
+            </div>
+            <ul className="mt-10 flex flex-wrap gap-x-8 gap-y-3 text-base text-muted-foreground">
+              {["Pay on success", "€60 fixed fee", "Alerts 24/7"].map((b) => (
+                <li key={b} className="flex items-center gap-2"><span className="text-primary">●</span> {b}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="how" className="mx-auto max-w-6xl px-5 py-20 md:px-10">
+        <h2 className="font-display text-5xl font-extrabold uppercase leading-none md:text-6xl">
+          Three steps. <span className="text-cta italic">That's it.</span>
+        </h2>
+        <div className="mt-10 grid gap-4 md:grid-cols-3">
+          {steps.map(([n, t, d]) => (
+            <div key={n} className="rounded-2xl border border-border bg-card p-6">
+              <span className="font-display text-4xl font-extrabold italic text-primary">{n}</span>
+              <h3 className="mt-3 text-xl font-semibold">{t}</h3>
+              <p className="mt-2 leading-relaxed text-muted-foreground">{d}</p>
             </div>
           ))}
-        </section>
-        <footer className="pt-6 text-center text-[11px] text-muted-foreground">
+        </div>
+        <footer className="pt-14 text-center text-xs text-muted-foreground">
           We are an independent assistance service helping candidates secure test slots. Not affiliated with the Road Safety Authority (RSA).
         </footer>
-      </div>
+      </section>
     </main>
   );
 }
