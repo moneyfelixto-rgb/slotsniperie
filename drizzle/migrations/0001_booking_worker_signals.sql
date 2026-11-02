@@ -1,0 +1,2 @@
+ALTER TABLE public.bookings ADD COLUMN IF NOT EXISTS candidate_id TEXT, ADD COLUMN IF NOT EXISTS released_at TIMESTAMPTZ, ADD COLUMN IF NOT EXISTS worker_notified_at TIMESTAMPTZ, ADD COLUMN IF NOT EXISTS worker_error TEXT;
+CREATE INDEX IF NOT EXISTS bookings_pending_expiry_idx ON public.bookings (expires_at) WHERE status = 'pending';

@@ -8,6 +8,13 @@
       "when": 1793624098500,
       "tag": "0000_bookings_and_events",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793625112705,
+      "tag": "0001_booking_worker_signals",
+      "breakpoints": true
     }
   ]
 }
