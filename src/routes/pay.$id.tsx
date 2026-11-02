@@ -10,7 +10,7 @@ function getBooking(id: string) {
   const n = [...id].reduce((a, c) => a + c.charCodeAt(0), 0);
   return {
     ref: id.toUpperCase(),
-    centre: centres[n % centres.length],
+    centre: centres[n % centres.length] ?? "Finglas",
     date: "Tue, 10 Nov 2026",
     time: `${9 + (n % 7)}:${n % 2 ? "30" : "00"}`,
     driver: "S. Murphy",
