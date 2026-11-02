@@ -26,18 +26,22 @@ const steps = [
 
 function Index() {
   return (
-    <main className="grid-bg min-h-screen">
+    <main className="min-h-screen bg-background">
       <div className="mx-auto flex min-h-screen max-w-md flex-col px-5 py-6">
-        <header className="flex items-center justify-between border-b border-border pb-4 font-mono text-xs uppercase tracking-widest">
-          <span>Slot<span className="text-primary">/</span>Sniper</span>
-          <span className="flex items-center gap-2 text-muted-foreground">
-            <span className="blink size-2 bg-primary" /> Live · IE
+        <header className="flex items-center justify-between border-b border-border pb-4">
+          <span className="text-sm font-bold tracking-tight">
+            Slot<span className="text-primary">.</span>Sniper
+          </span>
+          <span className="flex items-center gap-2 rounded-full border border-border px-3 py-1 text-[11px] font-medium text-muted-foreground">
+            <span className="blink size-1.5 rounded-full bg-primary" /> Live · Ireland
           </span>
         </header>
 
         <section className="flex flex-1 flex-col justify-center py-12">
-          <p className="mb-4 font-mono text-xs uppercase tracking-widest text-primary">// RSA driving test</p>
-          <h1 className="text-[2.6rem] font-bold leading-[1.02] tracking-tight">
+          <span className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+            Real-time RSA slot alerts
+          </span>
+          <h1 className="text-[2.5rem] font-bold leading-[1.08] tracking-tight">
             Get Your Irish Driving Test <span className="text-primary">Next Week.</span> Pay Only When Booked.
           </h1>
           <p className="mt-6 text-base leading-relaxed text-muted-foreground">
@@ -47,31 +51,31 @@ function Index() {
             href={WA_LINK}
             target="_blank"
             rel="noopener noreferrer"
-            className="glow mt-8 flex h-16 items-center justify-between bg-primary px-6 text-lg font-bold text-primary-foreground transition-transform active:scale-[0.98]"
+            className="glow mt-8 flex h-16 items-center justify-between rounded-2xl bg-primary px-6 text-lg font-bold text-primary-foreground transition-transform active:scale-[0.98]"
           >
             Start Free via WhatsApp <span aria-hidden>→</span>
           </a>
-          <ul className="mt-6 grid grid-cols-3 border border-border font-mono text-[10px] uppercase tracking-wider">
-            {["Pay-On-Success", "RSA Compliant Flow", "100% Secured"].map((b, i) => (
-              <li key={b} className={`flex items-center gap-1.5 p-3 ${i ? "border-l border-border" : ""}`}>
-                <span className="text-primary">✓</span>{b}
+          <ul className="mt-6 grid grid-cols-3 gap-2 text-[11px] font-medium text-muted-foreground">
+            {["Pay on success", "RSA compliant flow", "Secure checkout"].map((b) => (
+              <li key={b} className="rounded-xl border border-border bg-card p-3 leading-snug">
+                <span className="text-primary">✓</span> {b}
               </li>
             ))}
           </ul>
         </section>
 
-        <section className="border-t border-border">
-          {steps.map(([n, t, d]) => (
-            <div key={n} className="flex gap-4 border-b border-border py-5">
-              <span className="font-mono text-sm text-primary">{n}</span>
+        <section className="rounded-2xl border border-border bg-card p-5">
+          {steps.map(([n, t, d], i) => (
+            <div key={n} className={`flex gap-4 py-4 ${i ? "border-t border-border" : ""}`}>
+              <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">{n}</span>
               <div>
                 <h2 className="font-bold">{t}</h2>
-                <p className="mt-1 text-sm text-muted-foreground">{d}</p>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{d}</p>
               </div>
             </div>
           ))}
         </section>
-        <footer className="pt-6 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+        <footer className="pt-6 text-center text-[11px] text-muted-foreground">
           Independent service · Not affiliated with the RSA
         </footer>
       </div>
