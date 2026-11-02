@@ -12,10 +12,11 @@ const Event = z.discriminatedUnion("status", [
   z.object({ status: z.literal("SESSION_ACTIVE"), event_id: z.string().max(100).optional() }),
   z.object({ status: z.literal("SLOT_FOUND"), event_id: z.string().max(100).optional(), ...Slot }),
   z.object({
-    status: z.literal("BOOKING_CONFIRMED"),
+    status: z.enum(["BOOKING_CONFIRMED", "SLOT_LOCKED"]),
     event_id: z.string().max(100).optional(),
     ...Slot,
     reference: z.string().max(40).optional(),
+    candidate_id: z.string().max(40).optional(),
   }),
 ]);
 
