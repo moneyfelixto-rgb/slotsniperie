@@ -17,42 +17,54 @@ export type Database = {
       bookings: {
         Row: {
           amount_cents: number
+          candidate_id: string | null
           created_at: string
           expires_at: string
           id: string
           paid_at: string | null
           phone: string
           reference: string | null
+          released_at: string | null
           status: string
           test_centre: string
           test_date: string
           test_time: string
+          worker_error: string | null
+          worker_notified_at: string | null
         }
         Insert: {
           amount_cents?: number
+          candidate_id?: string | null
           created_at?: string
           expires_at?: string
           id: string
           paid_at?: string | null
           phone: string
           reference?: string | null
+          released_at?: string | null
           status?: string
           test_centre: string
           test_date: string
           test_time: string
+          worker_error?: string | null
+          worker_notified_at?: string | null
         }
         Update: {
           amount_cents?: number
+          candidate_id?: string | null
           created_at?: string
           expires_at?: string
           id?: string
           paid_at?: string | null
           phone?: string
           reference?: string | null
+          released_at?: string | null
           status?: string
           test_centre?: string
           test_date?: string
           test_time?: string
+          worker_error?: string | null
+          worker_notified_at?: string | null
         }
         Relationships: []
       }

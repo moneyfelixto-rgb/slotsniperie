@@ -76,7 +76,7 @@ function Index() {
           ))}
         </section>
         <footer className="pt-6 text-center text-[11px] text-muted-foreground">
-          Independent service · Not affiliated with the RSA
+          We are an independent assistance service helping candidates secure test slots. Not affiliated with the Road Safety Authority (RSA).
         </footer>
       </div>
     </main>

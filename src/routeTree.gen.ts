@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PayIdRouteImport } from './routes/pay.$id'
 import { Route as ApiPublicBotEventRouteImport } from './routes/api/public/bot-event'
+import { Route as ApiPublicCronReleaseExpiredRouteImport } from './routes/api/public/cron/release-expired'
 import { Route as ApiPublicWhatsappWebhookRouteImport } from './routes/api/public/whatsapp/webhook'
 
 const IndexRoute = IndexRouteImport.update({
@@ -29,6 +30,12 @@ const ApiPublicBotEventRoute = ApiPublicBotEventRouteImport.update({
   path: '/api/public/bot-event',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicCronReleaseExpiredRoute =
+  ApiPublicCronReleaseExpiredRouteImport.update({
+    id: '/api/public/cron/release-expired',
+    path: '/api/public/cron/release-expired',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicWhatsappWebhookRoute =
   ApiPublicWhatsappWebhookRouteImport.update({
     id: '/api/public/whatsapp/webhook',
@@ -40,12 +47,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/pay/$id': typeof PayIdRoute
   '/api/public/bot-event': typeof ApiPublicBotEventRoute
+  '/api/public/cron/release-expired': typeof ApiPublicCronReleaseExpiredRoute
   '/api/public/whatsapp/webhook': typeof ApiPublicWhatsappWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/pay/$id': typeof PayIdRoute
   '/api/public/bot-event': typeof ApiPublicBotEventRoute
+  '/api/public/cron/release-expired': typeof ApiPublicCronReleaseExpiredRoute
   '/api/public/whatsapp/webhook': typeof ApiPublicWhatsappWebhookRoute
 }
 export interface FileRoutesById {
@@ -53,20 +62,30 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/pay/$id': typeof PayIdRoute
   '/api/public/bot-event': typeof ApiPublicBotEventRoute
+  '/api/public/cron/release-expired': typeof ApiPublicCronReleaseExpiredRoute
   '/api/public/whatsapp/webhook': typeof ApiPublicWhatsappWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/pay/$id' | '/api/public/bot-event' | '/api/public/whatsapp/webhook'
+    | '/'
+    | '/pay/$id'
+    | '/api/public/bot-event'
+    | '/api/public/cron/release-expired'
+    | '/api/public/whatsapp/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
-    '/' | '/pay/$id' | '/api/public/bot-event' | '/api/public/whatsapp/webhook'
+    | '/'
+    | '/pay/$id'
+    | '/api/public/bot-event'
+    | '/api/public/cron/release-expired'
+    | '/api/public/whatsapp/webhook'
   id:
     | '__root__'
     | '/'
     | '/pay/$id'
     | '/api/public/bot-event'
+    | '/api/public/cron/release-expired'
     | '/api/public/whatsapp/webhook'
   fileRoutesById: FileRoutesById
 }
@@ -74,6 +93,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   PayIdRoute: typeof PayIdRoute
   ApiPublicBotEventRoute: typeof ApiPublicBotEventRoute
+  ApiPublicCronReleaseExpiredRoute: typeof ApiPublicCronReleaseExpiredRoute
   ApiPublicWhatsappWebhookRoute: typeof ApiPublicWhatsappWebhookRoute
 }
 
@@ -100,6 +120,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicBotEventRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cron/release-expired': {
+      id: '/api/public/cron/release-expired'
+      path: '/api/public/cron/release-expired'
+      fullPath: '/api/public/cron/release-expired'
+      preLoaderRoute: typeof ApiPublicCronReleaseExpiredRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/whatsapp/webhook': {
       id: '/api/public/whatsapp/webhook'
       path: '/api/public/whatsapp/webhook'
@@ -114,6 +141,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   PayIdRoute: PayIdRoute,
   ApiPublicBotEventRoute: ApiPublicBotEventRoute,
+  ApiPublicCronReleaseExpiredRoute: ApiPublicCronReleaseExpiredRoute,
   ApiPublicWhatsappWebhookRoute: ApiPublicWhatsappWebhookRoute,
 }
 export const routeTree = rootRouteImport

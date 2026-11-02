@@ -82,6 +82,7 @@ export const Route = createFileRoute("/api/public/bot-event")({
         const id = newId();
         const { error } = await supabaseAdmin.from("bookings").insert({
           id, phone: ev.phone, test_centre: ev.centre, test_date: ev.date, test_time: ev.time, reference: ev.reference ?? null,
+          candidate_id: ev.candidate_id ?? null,
         });
         if (error) return new Response("DB error", { status: 500 });
         const base = process.env['PUBLIC_SITE_URL'] ?? new URL(request.url).origin;

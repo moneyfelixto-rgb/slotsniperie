@@ -146,6 +146,9 @@ function PayPage() {
         </button>
       </div>
       <p className="mt-6 text-center text-[11px] text-muted-foreground">Encrypted · No charge if the slot is lost</p>
+      <p className="mt-3 text-center text-[10px] leading-relaxed text-muted-foreground">
+        We are an independent assistance service helping candidates secure test slots. Not affiliated with the Road Safety Authority (RSA).
+      </p>
     </main>
   );
 }
