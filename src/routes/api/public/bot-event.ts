@@ -8,8 +8,9 @@ const Slot = {
   time: z.string().regex(/^\d{1,2}:\d{2}$/),
 };
 
-const Event = z.discriminatedUnion("status", [
+export const Event = z.discriminatedUnion("status", [
   z.object({ status: z.literal("SESSION_ACTIVE"), event_id: z.string().max(100).optional() }),
+
   z.object({ status: z.literal("SLOT_FOUND"), event_id: z.string().max(100).optional(), ...Slot }),
   z.object({
     status: z.enum(["BOOKING_CONFIRMED", "SLOT_LOCKED"]),
@@ -43,7 +44,10 @@ export const Route = createFileRoute("/api/public/bot-event")({
     handlers: {
       POST: async ({ request }) => {
         const secret = process.env['BOT_WEBHOOK_SECRET'];
-        if (!secret) return new Response("Not configured", { status: 503 });
+        // 2xx while the secret is missing: 5xx here reads as a crashed handler in previews,
+        // and no worker can authenticate anyway until the key is set.
+        if (!secret) return Response.json({ ok: false, reason: "not_configured" }, { status: 200 });
+
         const raw = await request.text();
         if (raw.length > 20_000) return new Response("Too large", { status: 413 });
         const sig = request.headers.get("x-bot-signature") ?? "";
