@@ -9,8 +9,8 @@ const Slot = {
 };
 
 export const Event = z.discriminatedUnion("status", [
-
   z.object({ status: z.literal("SESSION_ACTIVE"), event_id: z.string().max(100).optional() }),
+
   z.object({ status: z.literal("SLOT_FOUND"), event_id: z.string().max(100).optional(), ...Slot }),
   z.object({
     status: z.enum(["BOOKING_CONFIRMED", "SLOT_LOCKED"]),
