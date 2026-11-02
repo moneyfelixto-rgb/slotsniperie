@@ -64,22 +64,22 @@ function PayPage() {
   if (state === "paid") {
     return (
       <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-5 py-8 animate-in fade-in zoom-in-95">
-        <div className="glow mb-8 flex size-16 items-center justify-center bg-primary text-3xl font-bold text-primary-foreground">✓</div>
+        <div className="glow mb-8 flex size-16 items-center justify-center rounded-2xl bg-primary text-3xl font-bold text-primary-foreground">✓</div>
         <h1 className="text-4xl font-bold leading-tight">Slot confirmed.</h1>
         <p className="mt-4 text-muted-foreground">
           €{FEE} received. Your test at <span className="text-foreground">{b.centre}</span> on {b.date} at {b.time} is locked in.
         </p>
-        <div className="mt-8 border border-primary p-4 text-sm">
-          <p className="font-mono text-xs uppercase tracking-widest text-primary">Next step</p>
-          <p className="mt-2">Check your inbox for the official RSA confirmation email. It can take up to 30 minutes — check spam too.</p>
+        <div className="mt-8 rounded-2xl border border-primary/40 bg-primary/5 p-4 text-sm">
+          <p className="text-xs font-semibold uppercase tracking-wider text-primary">Next step</p>
+          <p className="mt-2 leading-relaxed">Check your inbox for the official RSA confirmation email. It can take up to 30 minutes — check spam too.</p>
         </div>
         <button
           onClick={() => window.print()}
-          className="mt-6 h-14 border border-border font-bold transition-colors hover:border-primary hover:text-primary"
+          className="mt-6 h-14 rounded-2xl border border-border font-bold transition-colors hover:border-primary hover:text-primary"
         >
           Download receipt ↓
         </button>
-        <p className="mt-6 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Ref {b.ref} · Receipt also sent on WhatsApp</p>
+        <p className="mt-6 text-center text-[11px] text-muted-foreground">Ref {b.ref} · Receipt also sent on WhatsApp</p>
       </main>
     );
   }
@@ -89,32 +89,34 @@ function PayPage() {
 
   return (
     <main className="mx-auto min-h-screen max-w-md px-5 py-6">
-      <header className="flex items-center justify-between border-b border-border pb-4 font-mono text-xs uppercase tracking-widest">
-        <span>Slot<span className="text-primary">/</span>Sniper</span>
-        <span className="text-muted-foreground">🔒 Secure checkout</span>
+      <header className="flex items-center justify-between border-b border-border pb-4">
+        <span className="text-sm font-bold tracking-tight">
+          Slot<span className="text-primary">.</span>Sniper
+        </span>
+        <span className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">🔒 Secure checkout</span>
       </header>
 
-      <div className={`mt-6 border p-4 ${expired ? "border-destructive" : "border-primary"}`}>
-        <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+      <div className={`mt-6 rounded-2xl border p-5 ${expired ? "border-destructive" : "border-primary/40 bg-primary/5"}`}>
+        <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
           {expired ? "Hold expired" : "Slot held before auto-release"}
         </p>
-        <p className={`mt-1 font-mono text-4xl font-bold tabular-nums ${expired ? "text-destructive" : "text-primary"}`}>{fmt(left)}</p>
+        <p className={`mt-1 font-mono text-4xl font-bold tabular-nums ${expired ? "text-destructive" : "text-foreground"}`}>{fmt(left)}</p>
       </div>
 
       <h1 className="mt-8 text-3xl font-bold leading-tight">We got your slot.</h1>
       <p className="mt-2 text-sm text-muted-foreground">Confirm with a one-time €{FEE} service fee.</p>
 
-      <dl className="mt-6 border border-border bg-card">
+      <dl className="mt-6 rounded-2xl border border-border bg-card">
         {rows.map(([k, v]) => (
           <div key={k} className="flex justify-between border-b border-border px-4 py-3 text-sm last:border-b-0">
             <dt className="text-muted-foreground">{k}</dt>
-            <dd className="font-mono font-medium">{v}</dd>
+            <dd className="font-medium">{v}</dd>
           </div>
         ))}
       </dl>
 
-      <div className="mt-4 flex items-baseline justify-between border-t-2 border-primary pt-4">
-        <span className="font-mono text-xs uppercase tracking-widest">Total</span>
+      <div className="mt-4 flex items-baseline justify-between rounded-2xl border-t-2 border-primary pt-4">
+        <span className="text-xs font-semibold uppercase tracking-wider">Total</span>
         <span className="text-3xl font-bold">€{FEE}.00</span>
       </div>
 
@@ -122,21 +124,19 @@ function PayPage() {
         <button
           disabled={busy || expired}
           onClick={() => pay("revolut")}
-          className="glow flex h-16 w-full items-center justify-center bg-primary text-lg font-bold text-primary-foreground transition-transform active:scale-[0.98] disabled:opacity-40"
+          className="glow flex h-16 w-full items-center justify-center rounded-2xl bg-primary text-lg font-bold text-primary-foreground transition-transform active:scale-[0.98] disabled:opacity-40"
         >
           {state === "revolut" ? <span className="blink">Processing…</span> : "Pay with Revolut Pay"}
         </button>
         <button
           disabled={busy || expired}
           onClick={() => pay("stripe")}
-          className="flex h-16 w-full items-center justify-center border border-foreground text-lg font-bold transition-colors hover:border-primary hover:text-primary active:scale-[0.98] disabled:opacity-40"
+          className="flex h-16 w-full items-center justify-center rounded-2xl border border-foreground text-lg font-bold transition-colors hover:border-primary hover:text-primary active:scale-[0.98] disabled:opacity-40"
         >
           {state === "stripe" ? <span className="blink">Processing…</span> : "Pay by card · Apple Pay"}
         </button>
       </div>
-      <p className="mt-6 text-center font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-        Encrypted · No charge if the slot is lost
-      </p>
+      <p className="mt-6 text-center text-[11px] text-muted-foreground">Encrypted · No charge if the slot is lost</p>
     </main>
   );
 }
