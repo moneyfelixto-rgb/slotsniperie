@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PayIdRouteImport } from './routes/pay.$id'
+import { Route as ApiPublicBotEventRouteImport } from './routes/api/public/bot-event'
+import { Route as ApiPublicWhatsappWebhookRouteImport } from './routes/api/public/whatsapp/webhook'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +24,57 @@ const PayIdRoute = PayIdRouteImport.update({
   path: '/pay/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicBotEventRoute = ApiPublicBotEventRouteImport.update({
+  id: '/api/public/bot-event',
+  path: '/api/public/bot-event',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicWhatsappWebhookRoute =
+  ApiPublicWhatsappWebhookRouteImport.update({
+    id: '/api/public/whatsapp/webhook',
+    path: '/api/public/whatsapp/webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/pay/$id': typeof PayIdRoute
+  '/api/public/bot-event': typeof ApiPublicBotEventRoute
+  '/api/public/whatsapp/webhook': typeof ApiPublicWhatsappWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/pay/$id': typeof PayIdRoute
+  '/api/public/bot-event': typeof ApiPublicBotEventRoute
+  '/api/public/whatsapp/webhook': typeof ApiPublicWhatsappWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/pay/$id': typeof PayIdRoute
+  '/api/public/bot-event': typeof ApiPublicBotEventRoute
+  '/api/public/whatsapp/webhook': typeof ApiPublicWhatsappWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/pay/$id'
+  fullPaths:
+    '/' | '/pay/$id' | '/api/public/bot-event' | '/api/public/whatsapp/webhook'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/pay/$id'
-  id: '__root__' | '/' | '/pay/$id'
+  to:
+    '/' | '/pay/$id' | '/api/public/bot-event' | '/api/public/whatsapp/webhook'
+  id:
+    | '__root__'
+    | '/'
+    | '/pay/$id'
+    | '/api/public/bot-event'
+    | '/api/public/whatsapp/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   PayIdRoute: typeof PayIdRoute
+  ApiPublicBotEventRoute: typeof ApiPublicBotEventRoute
+  ApiPublicWhatsappWebhookRoute: typeof ApiPublicWhatsappWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +93,28 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PayIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/bot-event': {
+      id: '/api/public/bot-event'
+      path: '/api/public/bot-event'
+      fullPath: '/api/public/bot-event'
+      preLoaderRoute: typeof ApiPublicBotEventRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/whatsapp/webhook': {
+      id: '/api/public/whatsapp/webhook'
+      path: '/api/public/whatsapp/webhook'
+      fullPath: '/api/public/whatsapp/webhook'
+      preLoaderRoute: typeof ApiPublicWhatsappWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   PayIdRoute: PayIdRoute,
+  ApiPublicBotEventRoute: ApiPublicBotEventRoute,
+  ApiPublicWhatsappWebhookRoute: ApiPublicWhatsappWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
