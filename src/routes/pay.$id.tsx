@@ -1,24 +1,33 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { getBooking } from "@/lib/bookings.functions";
 
 const FEE = 60;
-const HOLD_SECONDS = 2 * 60 * 60 - 60; // 01:59:00
-
-// Demo booking lookup — replace with a real server lookup once the bot backend exists.
-function getBooking(id: string) {
-  const centres = ["Finglas", "Tallaght", "Raheny", "Churchtown", "Mulhuddart"];
-  const n = [...id].reduce((a, c) => a + c.charCodeAt(0), 0);
-  return {
-    ref: id.toUpperCase(),
-    centre: centres[n % centres.length] ?? "Finglas",
-    date: "Tue, 10 Nov 2026",
-    time: `${9 + (n % 7)}:${n % 2 ? "30" : "00"}`,
-    driver: "S. Murphy",
-    licence: "•••• 4821",
-  };
-}
 
 export const Route = createFileRoute("/pay/$id")({
+  loader: async ({ params }) => {
+    const b = await getBooking({ data: { id: params.id } }).catch(() => null);
+    if (b) {
+      return {
+        demo: false,
+        ref: b.reference ?? b.id,
+        centre: b.test_centre,
+        date: new Date(b.test_date).toLocaleDateString("en-IE", { weekday: "short", day: "numeric", month: "short", year: "numeric" }),
+        time: b.test_time,
+        expiresAt: new Date(b.expires_at).getTime(),
+        paid: b.status === "paid",
+      };
+    }
+    return {
+      demo: true,
+      ref: params.id.toUpperCase(),
+      centre: "Finglas",
+      date: "Tue, 10 Nov 2026",
+      time: "10:30",
+      expiresAt: Date.now() + 2 * 3600 * 1000 - 60_000,
+      paid: false,
+    };
+  },
   head: ({ params }) => ({
     meta: [
       { title: `Confirm your test slot — ${params.id.toUpperCase()}` },
@@ -37,27 +46,27 @@ const fmt = (s: number) =>
   [Math.floor(s / 3600), Math.floor((s % 3600) / 60), s % 60].map((v) => String(v).padStart(2, "0")).join(":");
 
 function PayPage() {
-  const { id } = Route.useParams();
-  const b = getBooking(id);
-  const [left, setLeft] = useState(HOLD_SECONDS);
-  const [state, setState] = useState<"idle" | "revolut" | "stripe" | "paid">("idle");
+  const b = Route.useLoaderData();
+  const calc = () => Math.max(0, Math.floor((b.expiresAt - Date.now()) / 1000));
+  const [left, setLeft] = useState(7140);
+  const [state, setState] = useState<"idle" | "revolut" | "stripe" | "paid">(b.paid ? "paid" : "idle");
 
   useEffect(() => {
-    const t = setInterval(() => setLeft((l) => Math.max(0, l - 1)), 1000);
+    setLeft(calc());
+    const t = setInterval(() => setLeft(calc()), 1000);
     return () => clearInterval(t);
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [b.expiresAt]);
 
   const pay = (m: "revolut" | "stripe") => {
     setState(m);
-    setTimeout(() => setState("paid"), 1600); // demo — wire to real payment provider
+    setTimeout(() => setState("paid"), 1600); // demo — real payments connect later
   };
 
   const rows: [string, string][] = [
     ["Test centre", b.centre],
     ["Date", b.date],
     ["Time", b.time],
-    ["Driver", b.driver],
-    ["Licence", b.licence],
     ["Reference", b.ref],
   ];
 
