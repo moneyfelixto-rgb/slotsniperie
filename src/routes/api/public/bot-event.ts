@@ -8,7 +8,8 @@ const Slot = {
   time: z.string().regex(/^\d{1,2}:\d{2}$/),
 };
 
-const Event = z.discriminatedUnion("status", [
+export const Event = z.discriminatedUnion("status", [
+
   z.object({ status: z.literal("SESSION_ACTIVE"), event_id: z.string().max(100).optional() }),
   z.object({ status: z.literal("SLOT_FOUND"), event_id: z.string().max(100).optional(), ...Slot }),
   z.object({
