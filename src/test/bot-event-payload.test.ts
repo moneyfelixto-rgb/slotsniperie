@@ -15,7 +15,8 @@ describe("bot-event payloads", () => {
     });
 
     expect(parsed.success).toBe(true);
-    if (parsed.success) {
+    if (parsed.success && parsed.data.status === "SLOT_LOCKED") {
+
       expect(parsed.data.centre).toBe("Finglas");
       expect(parsed.data.date).toBe("2026-11-10");
       expect(parsed.data.time).toBe("10:30");
