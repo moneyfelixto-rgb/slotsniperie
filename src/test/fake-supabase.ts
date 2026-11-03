@@ -19,13 +19,16 @@ export type FakeRow = {
   expires_at?: string;
   received_at?: string;
   released_at?: string | null;
+  whatsapp_sent_at?: string | null;
   [key: string]: unknown;
 };
 
 type Filter =
   | { op: "eq"; col: string; val: unknown }
   | { op: "gt"; col: string; val: unknown }
-  | { op: "lt"; col: string; val: unknown };
+  | { op: "lt"; col: string; val: unknown }
+  | { op: "in"; col: string; vals: unknown[] }
+  | { op: "is"; col: string; val: null };
 
 type DbError = { code: string; message: string; details: string | null } | null;
 
@@ -51,6 +54,8 @@ export function createFakeSupabase() {
       state.filters.every((filter) => {
         const left = row[filter.col];
         if (filter.op === "eq") return left === filter.val;
+        if (filter.op === "in") return filter.vals.includes(left);
+        if (filter.op === "is") return left == null;
         const l = typeof left === "string" ? Date.parse(left) : Number(left);
         const r = typeof filter.val === "string" ? Date.parse(filter.val) : Number(filter.val);
         if (Number.isNaN(l) || Number.isNaN(r)) return false;
@@ -85,6 +90,14 @@ export function createFakeSupabase() {
       },
       lt(col: string, val: unknown) {
         state.filters.push({ op: "lt", col, val });
+        return builder;
+      },
+      in(col: string, vals: unknown[]) {
+        state.filters.push({ op: "in", col, vals });
+        return builder;
+      },
+      is(col: string, val: null) {
+        state.filters.push({ op: "is", col, val });
         return builder;
       },
       maybeSingle() {

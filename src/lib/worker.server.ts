@@ -69,7 +69,18 @@ export async function markBookingPaid(bookingId: string): Promise<MarkPaidResult
     .select("id, candidate_id, test_centre, test_date, test_time")
     .maybeSingle();
   if (error) throw error;
-  if (!b) return { result: "expired" };
+  if (!b) {
+    const { data: again, error: againErr } = await supabaseAdmin
+      .from("bookings")
+      .select("status, expires_at")
+      .eq("id", bookingId)
+      .maybeSingle();
+    if (againErr) throw againErr;
+    if (again?.status === "pending" && Date.parse(again.expires_at) <= Date.now()) {
+      return { result: "expired" };
+    }
+    return { result: "not_pending" };
+  }
   try {
     await notifyWorker({
       event: "PAYMENT_SUCCESS",

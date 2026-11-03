@@ -15,7 +15,7 @@ This site does not collect OTPs, logins, or browser sessions. Those stay on the 
 | | |
 |---|---|
 | Header | `x-bot-signature`: lowercase hex HMAC-SHA256 of the **raw body bytes**, keyed with `BOT_WEBHOOK_SECRET`. No `sha256=` prefix. |
-| Body | UTF-8 JSON, at most 20 000 **bytes** (UTF-8 length, not UTF-16 characters). The server does not re-serialize the JSON before checking the signature. Sign the exact bytes you send. |
+| Body | UTF-8 JSON, at most 20 000 **bytes**. `Content-Length` is rejected before the body is read, and the read itself stops once the limit is passed. The server does not re-serialize the JSON before checking the signature. Sign the exact bytes you send. A leading UTF-8 BOM is stripped by the decoder, so do not include one. |
 | Freshness | `timestamp` must be within 5 minutes of the server clock, past or future. Older or further-ahead requests are rejected even when the signature is valid. |
 
 ### Envelope
@@ -26,7 +26,7 @@ This site does not collect OTPs, logins, or browser sessions. Those stay on the 
 | `timestamp` | always | ISO-8601 with a timezone, e.g. `2026-11-03T18:04:00.000Z`. |
 | `status` | always | `SESSION_ACTIVE`, `SLOT_FOUND`, `SLOT_LOCKED`, or `BOOKING_CONFIRMED`. |
 | `phone` | slot events | `+` optional, 8–15 digits. |
-| `centre` | slot events | Test centre name, 2–60 characters. Stored with surrounding space removed, repeated spaces collapsed, and letters lower-cased. `Tallaght` and ` tallaght ` are the same slot. |
+| `centre` | slot events | Test centre name, 2–60 characters. The row keeps this text (the schema trims the ends). The slot key ignores case, repeated whitespace, and NBSP, so `Tallaght` and ` tallaght ` are the same slot. |
 | `date` | slot events | `YYYY-MM-DD`. |
 | `time` | slot events | `H:MM` or `HH:MM`, 24-hour. Stored as `HH:MM`, so `9:05` and `09:05` are the same slot. |
 | `reference` | no | RSA reference, max 40 characters. `SLOT_LOCKED` / `BOOKING_CONFIRMED` only. |
@@ -64,15 +64,16 @@ This site does not collect OTPs, logins, or browser sessions. Those stay on the 
 | 409 | Another pending or paid booking already has this centre, date, and time. A pending row whose hold has already passed `expires_at` is expired first, so it does not block. | `{ "ok": false, "reason": "slot_taken" }` |
 | 425 | This `event_id` is claimed and the first attempt has not stored a result yet. Not success. Retry the same `event_id`. | `{ "ok": false, "reason": "in_progress" }` |
 | 413 | Body longer than 20 000 UTF-8 bytes. | `{ "ok": false, "reason": "too_large" }` |
-| 503 | `BOT_WEBHOOK_SECRET` is missing, or `PUBLIC_SITE_URL` is missing for a hold. The site does not invent a pay host from the request. Not success. Retry later. | `{ "ok": false, "reason": "not_configured" }` |
+| 401 | `BOT_WEBHOOK_SECRET` is missing or empty. The site still answers as an auth failure and does not say that it is unconfigured. | `missing_signature` or `invalid_signature` |
+| 503 | A signed hold arrived and `PUBLIC_SITE_URL` is missing. The site does not invent a pay host from the request. Not success. Retry after the setting exists. | `{ "ok": false, "reason": "not_configured" }` |
 
-The 5-minute window is only about `timestamp`. It does not expire an `event_id`. Replaying the original bytes after 5 minutes is **401** `timestamp_stale`. Send the **same `event_id` with a new timestamp** (and sign those new bytes). If the first attempt finished, the response is the stored result plus `duplicate: true`, including `booking_id` and `pay_url`. If the first attempt is still in progress and younger than about 60 seconds, the response is **425** `in_progress`. If that claim is older than about 60 seconds and still has no stored result, the site takes it over and finishes it.
+The 5-minute window is only about `timestamp`. It does not expire an `event_id`. Replaying the original bytes after 5 minutes is **401** `timestamp_stale`. Send the **same `event_id` with a new timestamp** (and sign those new bytes). If the first attempt finished, the response is the stored result plus `duplicate: true`, including `booking_id` and `pay_url`. If the first attempt is still in progress and younger than about 60 seconds, the response is **425** `in_progress`. If that claim is older than about 60 seconds and still has no stored result, the site takes it over and finishes the **stored** body, not the retry's body. The takeover sends the WhatsApp only when that hold has no `whatsapp_sent_at`. A result is stored only while this attempt still owns the claim. Statuses of 500 and above are not stored.
 
 Do not invent a new `event_id` for a slot you already sent. A second id for a slot that is already pending or paid is **409** `slot_taken`.
 
 ## Slot uniqueness
 
-Migration `drizzle/migrations/0002_active_slot_unique.sql` releases every active duplicate except the earliest, then adds a partial unique index on the normalised centre, date, and time where `status` is `pending` or `paid`. `status` is constrained to `pending`, `paid`, `expired`, or `released`. An expired hold does not block that slot: the handler marks a pending row past `expires_at` as expired before inserting.
+Migration `drizzle/migrations/0002_active_slot_unique.sql` marks lapsed pending rows expired, maps any other status to `released`, then keeps one active row per slot: paid before pending, a live hold before a lapsed one, then the earliest `created_at`, then the lowest id. It does not rewrite the stored centre. The partial unique index folds case, whitespace, and NBSP. `status` is constrained to `pending`, `paid`, `expired`, or `released`. The handler also expires a pending row past `expires_at` before inserting, so a lapsed hold does not block the slot while the cron is waiting.
 
 `PUBLIC_SITE_URL` is required. The pay link is `{PUBLIC_SITE_URL}/pay/{booking_id}`. The page does not take payment yet. The hold lasts 2 hours from creation. The fee is €60.
 
@@ -138,6 +139,6 @@ The worker client audited on 3 Nov 2026 does not speak this contract. Until it d
 2. Send `x-bot-signature` (hex HMAC of the raw body). Do not use `Authorization: Bearer`.
 3. Use `centre`, not `center`. Include `phone`. Put `status` at the top level, not under `metadata`.
 4. Send one `event_id` per delivery and a `timestamp` inside the signed JSON. A retry keeps that `event_id`. Within 5 minutes the same bytes are fine. After that, keep the `event_id` and put a fresh `timestamp` in newly signed bytes. A finished delivery returns the stored `booking_id` and `pay_url`.
-5. Treat **503** as "not configured", **401** `invalid_signature` as a config error, **401** `timestamp_stale` as "resend the same event_id with a fresh timestamp", **425** `in_progress` as "retry shortly", and **409** `slot_taken` as "do not open another hold". None of those are success. **202** means the hold exists and WhatsApp failed; keep `booking_id` and `pay_url`.
+5. Treat **401** as "fix the signature or the secret" (a missing secret is also 401, not 503), **401** `timestamp_stale` as "resend the same event_id with a fresh timestamp", **425** `in_progress` as "retry shortly", **409** `slot_taken` as "do not open another hold", and **503** as "`PUBLIC_SITE_URL` is missing". None of those are success. **202** means the hold exists and WhatsApp failed; keep `booking_id` and `pay_url`. A retry of a finished event uses the first stored body.
 6. Use **€60** and a **2 hour** hold everywhere (payment links included). This site ignores a `token` query on `/pay/:id`.
 7. `SLOT_LOCKED` means held, waiting for €60. The WhatsApp text from this site says HELD, not confirmed. Do not describe the slot as confirmed before the fee is paid.

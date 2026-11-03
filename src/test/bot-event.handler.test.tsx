@@ -69,7 +69,7 @@ describe("POST /api/public/bot-event", () => {
     expect(booking).toMatchObject({
       id: body.booking_id,
       phone: "+353861234567",
-      test_centre: "tallaght",
+      test_centre: "Tallaght",
       test_date: "2026-11-10",
       test_time: "10:30",
       amount_cents: SERVICE_FEE_CENTS,
@@ -185,12 +185,12 @@ describe("POST /api/public/bot-event", () => {
     expect(second.status).toBe(409);
   });
 
-  it("returns 503 when the webhook secret is missing", async () => {
+  it("returns 401 when the webhook secret is missing", async () => {
     delete process.env["BOT_WEBHOOK_SECRET"];
     const response = await handleBotEvent(await signedBotEventRequest(lockedEvent()));
 
-    expect(response.status).toBe(503);
-    expect(await response.json()).toMatchObject({ ok: false, reason: "not_configured" });
+    expect(response.status).toBe(401);
+    expect(await response.json()).toMatchObject({ ok: false, reason: "invalid_signature" });
     expect(state.fake?.bookings()).toHaveLength(0);
     expect(sendWhatsAppText).not.toHaveBeenCalled();
   });
@@ -214,12 +214,12 @@ describe("signed bot event → booking → /pay/:id", () => {
     const { booking_id: bookingId } = await response.json();
     const row = await fetchBookingById(bookingId);
 
-    expect(row?.test_centre).toBe("tallaght");
+    expect(row?.test_centre).toBe("Tallaght");
     expect(row?.amount_cents).toBe(SERVICE_FEE_CENTS);
     const view = toPayView(row!);
     render(<PayPageView booking={view} />);
 
-    expect(screen.getByText("tallaght")).toBeInTheDocument();
+    expect(screen.getByText("Tallaght")).toBeInTheDocument();
     expect(screen.getByText("14:15")).toBeInTheDocument();
     expect(screen.getByText(`€${SERVICE_FEE_EUR}.00`)).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /holding your slot/i })).toBeInTheDocument();

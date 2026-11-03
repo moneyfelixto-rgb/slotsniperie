@@ -39,8 +39,8 @@ describe("0002 active slot migration on Postgres", () => {
       "SELECT id, status, test_centre FROM bookings ORDER BY id",
     );
     expect(rows.rows).toEqual([
-      { id: "A1", status: "pending", test_centre: "tallaght" },
-      { id: "A2", status: "released", test_centre: "tallaght" },
+      { id: "A1", status: "pending", test_centre: "Tallaght" },
+      { id: "A2", status: "released", test_centre: " tallaght " },
     ]);
     expect(rows.rows.find((row) => row.id === "A2")?.status).toBe("released");
   });
@@ -95,5 +95,47 @@ describe("0002 active slot migration on Postgres", () => {
     );
     expect(index.rows[0]?.indexdef).toContain("UNIQUE INDEX");
     expect(index.rows[0]?.indexdef.toLowerCase()).toContain("pending");
+  });
+
+  it("keeps a paid booking, a live hold, and the lowest id on a timestamp tie", async () => {
+    const db = await fresh();
+    const tie = "'2026-11-01T10:00:00Z'";
+    await db.exec(ins("TIE_B", "pending", undefined, "Tallaght", tie));
+    await db.exec(ins("TIE_A", "pending", undefined, " tallaght ", tie));
+    await db.exec(ins("TIE_C", "pending", undefined, "TALLAGHT", tie));
+    await db.exec(ins("F1_PEND", "pending", undefined, "Finglas", "'2026-11-01T09:00:00Z'"));
+    await db.exec(ins("F2_PAID", "paid", undefined, "finglas", "'2026-11-01T09:30:00Z'"));
+    await db.exec(
+      ins("R1_LAPSED", "pending", "now() - interval '1 hour'", "Raheny", "'2026-11-01T08:00:00Z'"),
+    );
+    await db.exec(ins("R2_LIVE", "pending", undefined, "Raheny  ", "'2026-11-01T08:30:00Z'"));
+    await db.exec(ins("L3", "cancelled", undefined, "Naas"));
+
+    await db.exec(migration("0002_active_slot_unique.sql"));
+
+    const rows = await db.query<{ id: string; status: string; test_centre: string }>(
+      "SELECT id, status, test_centre FROM bookings ORDER BY id",
+    );
+    const byId = Object.fromEntries(rows.rows.map((row) => [row.id, row]));
+    expect(byId["TIE_A"]?.status).toBe("pending");
+    expect(byId["TIE_A"]?.test_centre).toBe(" tallaght ");
+    expect(byId["TIE_B"]?.status).toBe("released");
+    expect(byId["TIE_C"]?.status).toBe("released");
+    expect(byId["F2_PAID"]).toMatchObject({ status: "paid", test_centre: "finglas" });
+    expect(byId["F1_PEND"]?.status).toBe("released");
+    expect(byId["R1_LAPSED"]?.status).toBe("expired");
+    expect(byId["R2_LIVE"]).toMatchObject({ status: "pending", test_centre: "Raheny  " });
+    expect(byId["L3"]?.status).toBe("released");
+
+    await db.exec(migration("0002_active_slot_unique.sql"));
+    await db.exec(ins("N2", "pending", undefined, "tallaght test"));
+    await db.exec(
+      "INSERT INTO bookings (id, phone, test_centre, test_date, test_time, status) VALUES ('N1', '+353800000000', 'Tallaght' || chr(160) || 'Test', '2026-11-11', '09:00', 'pending')",
+    );
+    await expect(
+      db.exec(
+        "INSERT INTO bookings (id, phone, test_centre, test_date, test_time, status) VALUES ('N3', '+353800000000', 'tallaght test', '2026-11-11', '09:00', 'pending')",
+      ),
+    ).rejects.toThrow(/duplicate key|unique/i);
   });
 });

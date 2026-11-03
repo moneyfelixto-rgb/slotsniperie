@@ -21,6 +21,6 @@ export async function sendWhatsAppText(toDigits: string, body: string): Promise<
     }),
   });
   const text = await res.text();
-  if (!res.ok) throw new Error(`WhatsApp send failed (${res.status}): ${text}`);
+  if (!res.ok) throw new Error(`WhatsApp send failed (${res.status})`);
   return JSON.parse(text)?.messages?.[0]?.id ?? "";
 }

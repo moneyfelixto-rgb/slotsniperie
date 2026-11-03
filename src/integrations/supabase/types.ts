@@ -25,6 +25,7 @@ export type Database = {
           test_time: string;
           worker_error: string | null;
           worker_notified_at: string | null;
+          whatsapp_sent_at: string | null;
         };
         Insert: {
           amount_cents?: number;
@@ -42,6 +43,7 @@ export type Database = {
           test_time: string;
           worker_error?: string | null;
           worker_notified_at?: string | null;
+          whatsapp_sent_at?: string | null;
         };
         Update: {
           amount_cents?: number;
@@ -59,6 +61,7 @@ export type Database = {
           test_time?: string;
           worker_error?: string | null;
           worker_notified_at?: string | null;
+          whatsapp_sent_at?: string | null;
         };
         Relationships: [];
       };

@@ -167,7 +167,7 @@ describe("replay", () => {
     expect(b.duplicate).toBe(true);
     expect(b.booking_id).toBeTruthy();
     expect(state.fake!.bookings()).toHaveLength(1);
-    expect(state.fake!.bookings()[0]?.test_centre).toBe("tallaght");
+    expect(state.fake!.bookings()[0]?.test_centre).toBe("Tallaght");
   });
 });
 
@@ -291,7 +291,7 @@ describe("two holds on the same slot", () => {
         .fake!.bookings()
         .map((row) => row.test_centre)
         .sort(),
-    ).toEqual(["tallaght", "tallaght test centre"]);
+    ).toEqual(["Tallaght", "Tallaght  Test Centre"]);
   });
 
   it("does not let an unswept expired pending hold block a new hold", async () => {
@@ -351,14 +351,14 @@ describe("contract mismatches", () => {
     expect(state.fake!.bookings()).toHaveLength(0);
   });
 
-  it("missing secret and an empty secret both return 503", async () => {
+  it("missing secret and an empty secret both return 401", async () => {
     process.env["BOT_WEBHOOK_SECRET"] = "";
-    expect((await handleBotEvent(await signedBotEventRequest(lockedEvent()))).status).toBe(503);
+    expect((await handleBotEvent(await signedBotEventRequest(lockedEvent()))).status).toBe(401);
     delete process.env["BOT_WEBHOOK_SECRET"];
     expect(
       (await handleBotEvent(await signedBotEventRequest(lockedEvent({ event_id: "nosecret" }))))
         .status,
-    ).toBe(503);
+    ).toBe(401);
   });
 
   it("refuses to build a pay link from the request host when PUBLIC_SITE_URL is unset", async () => {
