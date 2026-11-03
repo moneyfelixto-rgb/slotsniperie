@@ -4,6 +4,9 @@
  * Events: RELEASE_SLOT (hold expired unpaid → worker cancels/re-assigns on RSA),
  *         PAYMENT_SUCCESS (fee paid → worker finalises on RSA).
  */
+import { hmacHex } from "@/lib/hmac";
+
+export { hmacHex };
 export type WorkerEvent =
   | {
       event: "RELEASE_SLOT";
@@ -23,18 +26,6 @@ export type WorkerEvent =
       time: string;
       paid_at: string;
     };
-
-export async function hmacHex(secret: string, body: string) {
-  const key = await crypto.subtle.importKey(
-    "raw",
-    new TextEncoder().encode(secret),
-    { name: "HMAC", hash: "SHA-256" },
-    false,
-    ["sign"],
-  );
-  const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(body));
-  return [...new Uint8Array(sig)].map((b) => b.toString(16).padStart(2, "0")).join("");
-}
 
 export async function notifyWorker(ev: WorkerEvent): Promise<void> {
   const url = process.env["WORKER_WEBHOOK_URL"];
@@ -63,10 +54,12 @@ export async function markBookingPaid(bookingId: string) {
     .update({ status: "paid", paid_at: paidAt })
     .eq("id", bookingId)
     .eq("status", "pending")
+    .gt("expires_at", paidAt)
     .select("id, candidate_id, test_centre, test_date, test_time")
     .maybeSingle();
   if (error) throw error;
-  if (!b) return; // already paid / released
+  // Missing row: already paid, released, or the hold expired before payment.
+  if (!b) return;
   try {
     await notifyWorker({
       event: "PAYMENT_SUCCESS",

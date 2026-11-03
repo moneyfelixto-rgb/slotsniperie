@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import nightVideo from "@/assets/videos/car_night_road.mp4.asset.json";
 import duskVideo from "@/assets/videos/car_country_dusk.mp4.asset.json";
+import { HOLD_HOURS, SERVICE_FEE_EUR } from "@/lib/offer";
 
 // TODO: replace with the real WhatsApp Business number (international format, digits only)
 const WA_NUMBER = "353000000000";
@@ -12,14 +13,12 @@ export const Route = createFileRoute("/")({
       { title: "Driving Slot Sniper — Irish Driving Test Next Week" },
       {
         name: "description",
-        content:
-          "Free real-time RSA driving test slot alerts via WhatsApp. Pay €60 only after your test is booked.",
+        content: `Free real-time RSA driving test slot alerts via WhatsApp. Pay €${SERVICE_FEE_EUR} only after your test is booked.`,
       },
       { property: "og:title", content: "Driving Slot Sniper — Pay Only When Booked" },
       {
         property: "og:description",
-        content:
-          "Free WhatsApp slot alerts for Irish driving tests. €60 only after we secure your slot.",
+        content: `Free WhatsApp slot alerts for Irish driving tests. €${SERVICE_FEE_EUR} only after we secure your slot.`,
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -31,7 +30,11 @@ export const Route = createFileRoute("/")({
 const steps = [
   ["01", "Message the bot", "Pick your test centres and dates on WhatsApp."],
   ["02", "We hunt 24/7", "Cancelled slots are caught the second they appear."],
-  ["03", "Pay on success", "€60 only once your slot is secured. Nothing before."],
+  [
+    "03",
+    "Pay on success",
+    `€${SERVICE_FEE_EUR} only once your slot is held. You have ${HOLD_HOURS} hours to pay. Nothing before.`,
+  ],
 ];
 
 function Index() {
@@ -90,8 +93,7 @@ function Index() {
               <span className="text-cta italic">Next week.</span>
             </h1>
             <p className="mt-7 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl">
-              Zero apps. Zero upfront fees. Free real-time slot alerts on WhatsApp — pay €60 only
-              after your test slot is secured.
+              {`Zero apps. Zero upfront fees. Free real-time slot alerts on WhatsApp — pay €${SERVICE_FEE_EUR} only after your test slot is secured.`}
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <a
@@ -110,7 +112,7 @@ function Index() {
               </a>
             </div>
             <ul className="mt-10 flex flex-wrap gap-x-8 gap-y-3 text-base text-muted-foreground">
-              {["Pay on success", "€60 fixed fee", "Alerts 24/7"].map((b) => (
+              {["Pay on success", `€${SERVICE_FEE_EUR} fixed fee`, "Alerts 24/7"].map((b) => (
                 <li key={b} className="flex items-center gap-2">
                   <span className="text-primary">●</span> {b}
                 </li>
