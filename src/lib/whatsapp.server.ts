@@ -2,8 +2,8 @@ const GATEWAY_URL = "https://connector-gateway.lovable.dev/whatsapp";
 
 /** Sends a free-form WhatsApp text via the Lovable connector gateway. Returns the Meta message id. */
 export async function sendWhatsAppText(toDigits: string, body: string): Promise<string> {
-  const lovableKey = process.env['LOVABLE_API_KEY'];
-  const waKey = process.env['WHATSAPP_API_KEY'];
+  const lovableKey = process.env["LOVABLE_API_KEY"];
+  const waKey = process.env["WHATSAPP_API_KEY"];
   if (!lovableKey || !waKey) throw new Error("WhatsApp is not connected yet");
   const res = await fetch(`${GATEWAY_URL}/messages`, {
     method: "POST",

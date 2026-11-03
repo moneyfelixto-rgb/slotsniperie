@@ -16,7 +16,6 @@ describe("bot-event payloads", () => {
 
     expect(parsed.success).toBe(true);
     if (parsed.success && parsed.data.status === "SLOT_LOCKED") {
-
       expect(parsed.data.centre).toBe("Finglas");
       expect(parsed.data.date).toBe("2026-11-10");
       expect(parsed.data.time).toBe("10:30");
@@ -25,7 +24,11 @@ describe("bot-event payloads", () => {
   });
 
   it("rejects a SLOT_LOCKED payload missing the booking fields", () => {
-    const parsed = Event.safeParse({ status: "SLOT_LOCKED", phone: "+353861234567", centre: "Finglas" });
+    const parsed = Event.safeParse({
+      status: "SLOT_LOCKED",
+      phone: "+353861234567",
+      centre: "Finglas",
+    });
 
     expect(parsed.success).toBe(false);
   });
