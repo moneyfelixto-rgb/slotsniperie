@@ -33,17 +33,29 @@ export const Route = createFileRoute("/api/public/cron/release-expired")({
 
         let sent = 0;
         for (const b of todo ?? []) {
-          const common = { booking_id: b.id, candidate_id: b.candidate_id, centre: b.test_centre, date: b.test_date, time: b.test_time };
+          const common = {
+            booking_id: b.id,
+            candidate_id: b.candidate_id,
+            centre: b.test_centre,
+            date: b.test_date,
+            time: b.test_time,
+          };
           try {
             await notifyWorker(
               b.status === "paid"
                 ? { event: "PAYMENT_SUCCESS", ...common, paid_at: b.paid_at ?? now }
                 : { event: "RELEASE_SLOT", ...common, reason: "expired_unpaid" },
             );
-            await supabaseAdmin.from("bookings").update({ worker_notified_at: new Date().toISOString(), worker_error: null }).eq("id", b.id);
+            await supabaseAdmin
+              .from("bookings")
+              .update({ worker_notified_at: new Date().toISOString(), worker_error: null })
+              .eq("id", b.id);
             sent++;
           } catch (e) {
-            await supabaseAdmin.from("bookings").update({ worker_error: String(e).slice(0, 500) }).eq("id", b.id);
+            await supabaseAdmin
+              .from("bookings")
+              .update({ worker_error: String(e).slice(0, 500) })
+              .eq("id", b.id);
           }
         }
         return Response.json({ ok: true, pending_notifications: todo?.length ?? 0, sent });
