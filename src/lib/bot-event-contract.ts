@@ -47,6 +47,11 @@ export function canonicalSlotTime(time: string): string {
   return `${hours.padStart(2, "0")}:${minutes}`;
 }
 
+/** Same key the partial unique index uses: trimmed, internal spaces collapsed, lower case. */
+export function canonicalCentre(centre: string): string {
+  return centre.trim().replace(/\s+/g, " ").toLowerCase();
+}
+
 export function timestampFreshness(
   timestampValue: string,
   now = Date.now(),

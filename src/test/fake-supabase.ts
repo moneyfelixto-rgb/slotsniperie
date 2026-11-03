@@ -1,3 +1,5 @@
+import { canonicalCentre } from "@/lib/bot-event-contract";
+
 export type FakeRow = {
   id?: string;
   delivery_id?: string | null;
@@ -15,10 +17,15 @@ export type FakeRow = {
   amount_cents?: number;
   status?: string;
   expires_at?: string;
+  received_at?: string;
+  released_at?: string | null;
   [key: string]: unknown;
 };
 
-type Filter = { col: string; val: unknown };
+type Filter =
+  | { op: "eq"; col: string; val: unknown }
+  | { op: "gt"; col: string; val: unknown }
+  | { op: "lt"; col: string; val: unknown };
 
 type DbError = { code: string; message: string; details: string | null } | null;
 
@@ -40,7 +47,15 @@ export function createFakeSupabase() {
       filters: [] as Filter[],
     };
 
-    const matches = (row: FakeRow) => state.filters.every((f) => row[f.col] === f.val);
+    const matches = (row: FakeRow) =>
+      state.filters.every((filter) => {
+        const left = row[filter.col];
+        if (filter.op === "eq") return left === filter.val;
+        const l = typeof left === "string" ? Date.parse(left) : Number(left);
+        const r = typeof filter.val === "string" ? Date.parse(filter.val) : Number(filter.val);
+        if (Number.isNaN(l) || Number.isNaN(r)) return false;
+        return filter.op === "gt" ? l > r : l < r;
+      });
 
     const builder = {
       insert(row: FakeRow) {
@@ -61,10 +76,15 @@ export function createFakeSupabase() {
         return builder;
       },
       eq(col: string, val: unknown) {
-        state.filters.push({ col, val });
+        state.filters.push({ op: "eq", col, val });
         return builder;
       },
-      gt() {
+      gt(col: string, val: unknown) {
+        state.filters.push({ op: "gt", col, val });
+        return builder;
+      },
+      lt(col: string, val: unknown) {
+        state.filters.push({ op: "lt", col, val });
         return builder;
       },
       maybeSingle() {
@@ -83,6 +103,7 @@ export function createFakeSupabase() {
         const row = { ...state.payload };
         if (table === "bot_events") {
           if (!row.id) row.id = crypto.randomUUID();
+          if (!row.received_at) row.received_at = new Date().toISOString();
           if (row.delivery_id != null) {
             const dup = rows().find((existing) => existing.delivery_id === row.delivery_id);
             if (dup) {
@@ -112,7 +133,8 @@ export function createFakeSupabase() {
           const clash = rows().find(
             (existing) =>
               (existing.status === "pending" || existing.status === "paid") &&
-              existing.test_centre === row.test_centre &&
+              canonicalCentre(String(existing.test_centre ?? "")) ===
+                canonicalCentre(String(row.test_centre ?? "")) &&
               existing.test_date === row.test_date &&
               existing.test_time === row.test_time,
           );
@@ -133,10 +155,13 @@ export function createFakeSupabase() {
       }
 
       if (state.op === "update") {
+        const updated: FakeRow[] = [];
         for (const row of rows()) {
-          if (matches(row)) Object.assign(row, state.payload);
+          if (!matches(row)) continue;
+          Object.assign(row, state.payload);
+          updated.push(row);
         }
-        return { data: null, error: null };
+        return { data: single ? (updated[0] ?? null) : updated, error: null };
       }
 
       if (state.op === "delete") {

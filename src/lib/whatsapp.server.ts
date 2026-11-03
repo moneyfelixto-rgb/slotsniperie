@@ -12,6 +12,7 @@ export async function sendWhatsAppText(toDigits: string, body: string): Promise<
       "X-Connection-Api-Key": waKey,
       "Content-Type": "application/json",
     },
+    signal: AbortSignal.timeout(8_000),
     body: JSON.stringify({
       messaging_product: "whatsapp",
       to: toDigits.replace(/\D/g, ""),

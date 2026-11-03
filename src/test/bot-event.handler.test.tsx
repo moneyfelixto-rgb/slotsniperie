@@ -69,7 +69,7 @@ describe("POST /api/public/bot-event", () => {
     expect(booking).toMatchObject({
       id: body.booking_id,
       phone: "+353861234567",
-      test_centre: "Tallaght",
+      test_centre: "tallaght",
       test_date: "2026-11-10",
       test_time: "10:30",
       amount_cents: SERVICE_FEE_CENTS,
@@ -214,12 +214,12 @@ describe("signed bot event → booking → /pay/:id", () => {
     const { booking_id: bookingId } = await response.json();
     const row = await fetchBookingById(bookingId);
 
-    expect(row?.test_centre).toBe("Tallaght");
+    expect(row?.test_centre).toBe("tallaght");
     expect(row?.amount_cents).toBe(SERVICE_FEE_CENTS);
     const view = toPayView(row!);
     render(<PayPageView booking={view} />);
 
-    expect(screen.getByText("Tallaght")).toBeInTheDocument();
+    expect(screen.getByText("tallaght")).toBeInTheDocument();
     expect(screen.getByText("14:15")).toBeInTheDocument();
     expect(screen.getByText(`€${SERVICE_FEE_EUR}.00`)).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /holding your slot/i })).toBeInTheDocument();
@@ -263,7 +263,9 @@ describe("offer and migration", () => {
     expect(defaults).toContain(`DEFAULT ${SERVICE_FEE_CENTS}`);
     expect(defaults).toContain(`interval '${HOLD_HOURS} hours'`);
     expect(slotIndex).toContain("bookings_active_slot_uidx");
-    expect(slotIndex).toContain("test_centre, test_date, test_time");
+    expect(slotIndex).toContain("status = 'released'");
+    expect(slotIndex).toContain("bookings_status_check");
+    expect(slotIndex).toContain("status IN ('pending', 'paid', 'expired', 'released')");
     expect(slotIndex).toContain("status IN ('pending', 'paid')");
   });
 });

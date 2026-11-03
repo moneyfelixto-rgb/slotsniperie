@@ -45,10 +45,21 @@ export async function notifyWorker(ev: WorkerEvent): Promise<void> {
     throw new Error(`Worker responded ${res.status}: ${(await res.text()).slice(0, 300)}`);
 }
 
-/** Marks a booking paid and tells the worker. Call from the payment webhook. */
-export async function markBookingPaid(bookingId: string) {
+export type MarkPaidResult = { result: "paid" } | { result: "expired" } | { result: "not_pending" };
+
+/** Marks a pending, unexpired booking paid and tells the worker. Call from the payment webhook. */
+export async function markBookingPaid(bookingId: string): Promise<MarkPaidResult> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const paidAt = new Date().toISOString();
+  const { data: current, error: readErr } = await supabaseAdmin
+    .from("bookings")
+    .select("id, status, expires_at")
+    .eq("id", bookingId)
+    .maybeSingle();
+  if (readErr) throw readErr;
+  if (!current || current.status !== "pending") return { result: "not_pending" };
+  if (Date.parse(current.expires_at) <= Date.parse(paidAt)) return { result: "expired" };
+
   const { data: b, error } = await supabaseAdmin
     .from("bookings")
     .update({ status: "paid", paid_at: paidAt })
@@ -58,8 +69,7 @@ export async function markBookingPaid(bookingId: string) {
     .select("id, candidate_id, test_centre, test_date, test_time")
     .maybeSingle();
   if (error) throw error;
-  // Missing row: already paid, released, or the hold expired before payment.
-  if (!b) return;
+  if (!b) return { result: "expired" };
   try {
     await notifyWorker({
       event: "PAYMENT_SUCCESS",
@@ -80,4 +90,5 @@ export async function markBookingPaid(bookingId: string) {
       .update({ worker_error: String(e) })
       .eq("id", b.id);
   }
+  return { result: "paid" };
 }
