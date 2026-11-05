@@ -29,6 +29,7 @@ export type Database = {
           test_centre: string
           test_date: string
           test_time: string
+          whatsapp_sent_at: string | null
           worker_error: string | null
           worker_notified_at: string | null
         }
@@ -46,6 +47,7 @@ export type Database = {
           test_centre: string
           test_date: string
           test_time: string
+          whatsapp_sent_at?: string | null
           worker_error?: string | null
           worker_notified_at?: string | null
         }
@@ -63,6 +65,7 @@ export type Database = {
           test_centre?: string
           test_date?: string
           test_time?: string
+          whatsapp_sent_at?: string | null
           worker_error?: string | null
           worker_notified_at?: string | null
         }
