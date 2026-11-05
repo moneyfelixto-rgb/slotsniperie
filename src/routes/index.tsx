@@ -68,7 +68,7 @@ function Index() {
               <span className="text-cta italic">Next week.</span>
             </h1>
             <p className="mt-7 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl">
-              Zero apps. Zero upfront fees. Free real-time slot alerts on WhatsApp — pay €60 only after your test slot is secured.
+              Zero apps. Zero upfront fees. Free real-time slot alerts on WhatsApp — pay €{SERVICE_FEE_EUR} only after your test slot is secured.
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="bg-cta glow flex h-16 items-center justify-center gap-3 rounded-full px-8 text-lg font-semibold uppercase tracking-wide text-primary-foreground transition-transform active:scale-[0.98]">
@@ -79,7 +79,7 @@ function Index() {
               </a>
             </div>
             <ul className="mt-10 flex flex-wrap gap-x-8 gap-y-3 text-base text-muted-foreground">
-              {["Pay on success", "€60 fixed fee", "Alerts 24/7"].map((b) => (
+              {[`Pay on success`, `€${SERVICE_FEE_EUR} fixed fee`, "Alerts 24/7"].map((b) => (
                 <li key={b} className="flex items-center gap-2"><span className="text-primary">●</span> {b}</li>
               ))}
             </ul>
@@ -109,7 +109,7 @@ function Index() {
           </div>
           <div className="rounded-2xl border border-primary/50 bg-primary/5 p-6">
             <h3 className="text-xl font-semibold">Auto-book (optional)</h3>
-            <p className="mt-2 font-display text-5xl font-extrabold">€60</p>
+            <p className="mt-2 font-display text-5xl font-extrabold">€{SERVICE_FEE_EUR}</p>
             <p className="mt-2 text-muted-foreground">Charged only after a slot is held for you. Requires a connected MyRoadSafety account; booking is not guaranteed.</p>
           </div>
         </div>
