@@ -30,7 +30,7 @@ const steps = [
 const faq: [string, string][] = [
   ["Do alerts cost anything?", "No. WhatsApp slot alerts are free."],
   ["Is a booking guaranteed?", "No. Auto-book depends on your connected MyRoadSafety session and slot availability. You pay nothing unless a slot is held."],
-  ["When do I pay €60?", "Only after a slot is held for you. You get a payment link on WhatsApp and have 2 hours to confirm."],
+  ["When do I pay €60?", `Only after a slot is held for you. You get a payment link on WhatsApp and have ${HOLD_HOURS} hours to confirm.`],
   ["Are you the RSA?", "No. We are an independent assistance service, not affiliated with the Road Safety Authority."],
 ];
 
