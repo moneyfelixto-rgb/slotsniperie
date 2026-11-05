@@ -22,5 +22,8 @@ describe("App routing", () => {
 
     expect(matches.at(-1)?.routeId).not.toBe(rootRouteId);
   });
-
+  it("matches a page for /auth/connect", () => {
+    const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
+    expect(router.matchRoutes("/auth/connect").at(-1)?.routeId).toBe("/auth/connect");
+  });
 });
