@@ -11,9 +11,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Driving Slot Sniper — Irish Driving Test Next Week" },
-      { name: "description", content: "Free real-time RSA driving test slot alerts via WhatsApp. Pay €60 only after your test is booked." },
+      { name: "description", content: `Free real-time RSA driving test slot alerts via WhatsApp. Pay €${SERVICE_FEE_EUR} only after your test is booked.` },
       { property: "og:title", content: "Driving Slot Sniper — Pay Only When Booked" },
-      { property: "og:description", content: "Free WhatsApp slot alerts for Irish driving tests. €60 only after we secure your slot." },
+      { property: "og:description", content: `Free WhatsApp slot alerts for Irish driving tests. €${SERVICE_FEE_EUR} only after we secure your slot.` },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/")({
 const steps = [
   ["01", "Message the bot", "Pick your test centres and dates on WhatsApp."],
   ["02", "We hunt 24/7", "Cancelled slots are caught the second they appear."],
-  ["03", "Optional auto-book", "Connect your account and we try to hold a slot for you. €60 only if one is held."],
+  ["03", "Optional auto-book", `Connect your account and we try to hold a slot for you. €${SERVICE_FEE_EUR} only if one is held.`],
 ];
 
 const faq: [string, string][] = [
