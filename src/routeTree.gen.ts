@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthConnectRouteImport } from './routes/auth.connect'
 import { Route as PayIdRouteImport } from './routes/pay.$id'
 import { Route as ApiPublicBotEventRouteImport } from './routes/api/public/bot-event'
 import { Route as ApiPublicCronReleaseExpiredRouteImport } from './routes/api/public/cron/release-expired'
@@ -18,6 +19,11 @@ import { Route as ApiPublicWhatsappWebhookRouteImport } from './routes/api/publi
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthConnectRoute = AuthConnectRouteImport.update({
+  id: '/auth/connect',
+  path: '/auth/connect',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PayIdRoute = PayIdRouteImport.update({
@@ -45,6 +51,7 @@ const ApiPublicWhatsappWebhookRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth/connect': typeof AuthConnectRoute
   '/pay/$id': typeof PayIdRoute
   '/api/public/bot-event': typeof ApiPublicBotEventRoute
   '/api/public/cron/release-expired': typeof ApiPublicCronReleaseExpiredRoute
@@ -52,6 +59,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth/connect': typeof AuthConnectRoute
   '/pay/$id': typeof PayIdRoute
   '/api/public/bot-event': typeof ApiPublicBotEventRoute
   '/api/public/cron/release-expired': typeof ApiPublicCronReleaseExpiredRoute
@@ -60,6 +68,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth/connect': typeof AuthConnectRoute
   '/pay/$id': typeof PayIdRoute
   '/api/public/bot-event': typeof ApiPublicBotEventRoute
   '/api/public/cron/release-expired': typeof ApiPublicCronReleaseExpiredRoute
@@ -69,6 +78,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth/connect'
     | '/pay/$id'
     | '/api/public/bot-event'
     | '/api/public/cron/release-expired'
@@ -76,6 +86,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth/connect'
     | '/pay/$id'
     | '/api/public/bot-event'
     | '/api/public/cron/release-expired'
@@ -83,6 +94,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/auth/connect'
     | '/pay/$id'
     | '/api/public/bot-event'
     | '/api/public/cron/release-expired'
@@ -91,6 +103,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthConnectRoute: typeof AuthConnectRoute
   PayIdRoute: typeof PayIdRoute
   ApiPublicBotEventRoute: typeof ApiPublicBotEventRoute
   ApiPublicCronReleaseExpiredRoute: typeof ApiPublicCronReleaseExpiredRoute
@@ -104,6 +117,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/connect': {
+      id: '/auth/connect'
+      path: '/auth/connect'
+      fullPath: '/auth/connect'
+      preLoaderRoute: typeof AuthConnectRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pay/$id': {
@@ -139,6 +159,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthConnectRoute: AuthConnectRoute,
   PayIdRoute: PayIdRoute,
   ApiPublicBotEventRoute: ApiPublicBotEventRoute,
   ApiPublicCronReleaseExpiredRoute: ApiPublicCronReleaseExpiredRoute,
