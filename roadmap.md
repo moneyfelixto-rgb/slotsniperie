@@ -1,7 +1,9 @@
 # Roadmap
 
 ## Done
+- Merged the Cursor branch `cursor/harden-bot-event-pay-f2ea` (PR #1) into the Lovable project (Nov 5, 2026); migration 0002_active_slot_unique applied to the database, types regenerated, 79 tests pass
 - Landing page + checkout UI (black/red theme)
+- /auth/connect: takes the bot's token link and forwards the user to the stealth-auth backend sign-in (kept during the merge)
 - Lovable Cloud: `bookings` + `bot_events` tables (bookings expire 2h after creation)
 - POST /api/public/bot-event: one HMAC contract (`docs/bot-event-contract.md`, zod `BotEvent`). Required `event_id` + `timestamp` inside the signed body (reject older than 5 minutes or more than 5 minutes ahead). Missing or bad `x-bot-signature` → 401. Missing secret → 401. Missing `PUBLIC_SITE_URL` on a signed hold → 503. A finished `event_id` replays the stored `booking_id` and `pay_url`. A claim with no result yet is 425 `in_progress`; claims older than about 60s are taken over. Centres are matched case-insensitively. A pending hold past `expires_at` is expired before a new hold. Partial unique index on active slots (migration releases older duplicates first); conflict → 409. WhatsApp failure on a hold is 202. SLOT_LOCKED text says the slot is HELD for 2h and €60 is required to confirm. `markBookingPaid` returns `expired` when the hold has lapsed.
 - POST /api/public/whatsapp-webhook (incoming messages stored)
