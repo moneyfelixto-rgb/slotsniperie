@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import nightVideo from "@/assets/videos/car_night_road.mp4.asset.json";
 import duskVideo from "@/assets/videos/car_country_dusk.mp4.asset.json";
+import { HOLD_HOURS, SERVICE_FEE_EUR } from "@/lib/offer";
 
 // TODO: replace with the real WhatsApp Business number (international format, digits only)
 const WA_NUMBER = "353000000000";
