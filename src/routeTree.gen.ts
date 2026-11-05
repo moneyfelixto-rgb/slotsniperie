@@ -13,6 +13,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthConnectRouteImport } from './routes/auth.connect'
 import { Route as PayIdRouteImport } from './routes/pay.$id'
 import { Route as ApiPublicBotEventRouteImport } from './routes/api/public/bot-event'
+import { Route as ApiPublicReleaseExpiredRouteImport } from './routes/api/public/release-expired'
+import { Route as ApiPublicWebhookRouteImport } from './routes/api/public/webhook'
 import { Route as ApiPublicCronReleaseExpiredRouteImport } from './routes/api/public/cron/release-expired'
 import { Route as ApiPublicWhatsappWebhookRouteImport } from './routes/api/public/whatsapp/webhook'
 
@@ -36,6 +38,16 @@ const ApiPublicBotEventRoute = ApiPublicBotEventRouteImport.update({
   path: '/api/public/bot-event',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicReleaseExpiredRoute = ApiPublicReleaseExpiredRouteImport.update({
+  id: '/api/public/release-expired',
+  path: '/api/public/release-expired',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicWebhookRoute = ApiPublicWebhookRouteImport.update({
+  id: '/api/public/webhook',
+  path: '/api/public/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicCronReleaseExpiredRoute =
   ApiPublicCronReleaseExpiredRouteImport.update({
     id: '/api/public/cron/release-expired',
@@ -54,6 +66,8 @@ export interface FileRoutesByFullPath {
   '/auth/connect': typeof AuthConnectRoute
   '/pay/$id': typeof PayIdRoute
   '/api/public/bot-event': typeof ApiPublicBotEventRoute
+  '/api/public/release-expired': typeof ApiPublicReleaseExpiredRoute
+  '/api/public/webhook': typeof ApiPublicWebhookRoute
   '/api/public/cron/release-expired': typeof ApiPublicCronReleaseExpiredRoute
   '/api/public/whatsapp/webhook': typeof ApiPublicWhatsappWebhookRoute
 }
@@ -62,6 +76,8 @@ export interface FileRoutesByTo {
   '/auth/connect': typeof AuthConnectRoute
   '/pay/$id': typeof PayIdRoute
   '/api/public/bot-event': typeof ApiPublicBotEventRoute
+  '/api/public/release-expired': typeof ApiPublicReleaseExpiredRoute
+  '/api/public/webhook': typeof ApiPublicWebhookRoute
   '/api/public/cron/release-expired': typeof ApiPublicCronReleaseExpiredRoute
   '/api/public/whatsapp/webhook': typeof ApiPublicWhatsappWebhookRoute
 }
@@ -71,6 +87,8 @@ export interface FileRoutesById {
   '/auth/connect': typeof AuthConnectRoute
   '/pay/$id': typeof PayIdRoute
   '/api/public/bot-event': typeof ApiPublicBotEventRoute
+  '/api/public/release-expired': typeof ApiPublicReleaseExpiredRoute
+  '/api/public/webhook': typeof ApiPublicWebhookRoute
   '/api/public/cron/release-expired': typeof ApiPublicCronReleaseExpiredRoute
   '/api/public/whatsapp/webhook': typeof ApiPublicWhatsappWebhookRoute
 }
@@ -81,6 +99,8 @@ export interface FileRouteTypes {
     | '/auth/connect'
     | '/pay/$id'
     | '/api/public/bot-event'
+    | '/api/public/release-expired'
+    | '/api/public/webhook'
     | '/api/public/cron/release-expired'
     | '/api/public/whatsapp/webhook'
   fileRoutesByTo: FileRoutesByTo
@@ -89,6 +109,8 @@ export interface FileRouteTypes {
     | '/auth/connect'
     | '/pay/$id'
     | '/api/public/bot-event'
+    | '/api/public/release-expired'
+    | '/api/public/webhook'
     | '/api/public/cron/release-expired'
     | '/api/public/whatsapp/webhook'
   id:
@@ -97,6 +119,8 @@ export interface FileRouteTypes {
     | '/auth/connect'
     | '/pay/$id'
     | '/api/public/bot-event'
+    | '/api/public/release-expired'
+    | '/api/public/webhook'
     | '/api/public/cron/release-expired'
     | '/api/public/whatsapp/webhook'
   fileRoutesById: FileRoutesById
@@ -106,6 +130,8 @@ export interface RootRouteChildren {
   AuthConnectRoute: typeof AuthConnectRoute
   PayIdRoute: typeof PayIdRoute
   ApiPublicBotEventRoute: typeof ApiPublicBotEventRoute
+  ApiPublicReleaseExpiredRoute: typeof ApiPublicReleaseExpiredRoute
+  ApiPublicWebhookRoute: typeof ApiPublicWebhookRoute
   ApiPublicCronReleaseExpiredRoute: typeof ApiPublicCronReleaseExpiredRoute
   ApiPublicWhatsappWebhookRoute: typeof ApiPublicWhatsappWebhookRoute
 }
@@ -140,6 +166,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicBotEventRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/release-expired': {
+      id: '/api/public/release-expired'
+      path: '/api/public/release-expired'
+      fullPath: '/api/public/release-expired'
+      preLoaderRoute: typeof ApiPublicReleaseExpiredRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/webhook': {
+      id: '/api/public/webhook'
+      path: '/api/public/webhook'
+      fullPath: '/api/public/webhook'
+      preLoaderRoute: typeof ApiPublicWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/cron/release-expired': {
       id: '/api/public/cron/release-expired'
       path: '/api/public/cron/release-expired'
@@ -162,6 +202,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthConnectRoute: AuthConnectRoute,
   PayIdRoute: PayIdRoute,
   ApiPublicBotEventRoute: ApiPublicBotEventRoute,
+  ApiPublicReleaseExpiredRoute: ApiPublicReleaseExpiredRoute,
+  ApiPublicWebhookRoute: ApiPublicWebhookRoute,
   ApiPublicCronReleaseExpiredRoute: ApiPublicCronReleaseExpiredRoute,
   ApiPublicWhatsappWebhookRoute: ApiPublicWhatsappWebhookRoute,
 }

@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import nightVideo from "@/assets/videos/car_night_road.mp4.asset.json";
 import duskVideo from "@/assets/videos/car_country_dusk.mp4.asset.json";
+import { HOLD_HOURS, SERVICE_FEE_EUR } from "@/lib/offer";
 
 // TODO: replace with the real WhatsApp Business number (international format, digits only)
 const WA_NUMBER = "353000000000";
@@ -10,9 +11,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Driving Slot Sniper — Irish Driving Test Next Week" },
-      { name: "description", content: "Free real-time RSA driving test slot alerts via WhatsApp. Pay €60 only after your test is booked." },
+      { name: "description", content: `Free real-time RSA driving test slot alerts via WhatsApp. Pay €${SERVICE_FEE_EUR} only after your test is booked.` },
       { property: "og:title", content: "Driving Slot Sniper — Pay Only When Booked" },
-      { property: "og:description", content: "Free WhatsApp slot alerts for Irish driving tests. €60 only after we secure your slot." },
+      { property: "og:description", content: `Free WhatsApp slot alerts for Irish driving tests. €${SERVICE_FEE_EUR} only after we secure your slot.` },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -23,13 +24,13 @@ export const Route = createFileRoute("/")({
 const steps = [
   ["01", "Message the bot", "Pick your test centres and dates on WhatsApp."],
   ["02", "We hunt 24/7", "Cancelled slots are caught the second they appear."],
-  ["03", "Optional auto-book", "Connect your account and we try to hold a slot for you. €60 only if one is held."],
+  ["03", "Optional auto-book", `Connect your account and we try to hold a slot for you. €${SERVICE_FEE_EUR} only if one is held.`],
 ];
 
 const faq: [string, string][] = [
   ["Do alerts cost anything?", "No. WhatsApp slot alerts are free."],
   ["Is a booking guaranteed?", "No. Auto-book depends on your connected MyRoadSafety session and slot availability. You pay nothing unless a slot is held."],
-  ["When do I pay €60?", "Only after a slot is held for you. You get a payment link on WhatsApp and have 2 hours to confirm."],
+  ["When do I pay €60?", `Only after a slot is held for you. You get a payment link on WhatsApp and have ${HOLD_HOURS} hours to confirm.`],
   ["Are you the RSA?", "No. We are an independent assistance service, not affiliated with the Road Safety Authority."],
 ];
 
@@ -67,7 +68,7 @@ function Index() {
               <span className="text-cta italic">Next week.</span>
             </h1>
             <p className="mt-7 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl">
-              Zero apps. Zero upfront fees. Free real-time slot alerts on WhatsApp — pay €60 only after your test slot is secured.
+              Zero apps. Zero upfront fees. Free real-time slot alerts on WhatsApp — pay €{SERVICE_FEE_EUR} only after your test slot is secured.
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="bg-cta glow flex h-16 items-center justify-center gap-3 rounded-full px-8 text-lg font-semibold uppercase tracking-wide text-primary-foreground transition-transform active:scale-[0.98]">
@@ -78,7 +79,7 @@ function Index() {
               </a>
             </div>
             <ul className="mt-10 flex flex-wrap gap-x-8 gap-y-3 text-base text-muted-foreground">
-              {["Pay on success", "€60 fixed fee", "Alerts 24/7"].map((b) => (
+              {[`Pay on success`, `€${SERVICE_FEE_EUR} fixed fee`, "Alerts 24/7"].map((b) => (
                 <li key={b} className="flex items-center gap-2"><span className="text-primary">●</span> {b}</li>
               ))}
             </ul>
@@ -108,7 +109,7 @@ function Index() {
           </div>
           <div className="rounded-2xl border border-primary/50 bg-primary/5 p-6">
             <h3 className="text-xl font-semibold">Auto-book (optional)</h3>
-            <p className="mt-2 font-display text-5xl font-extrabold">€60</p>
+            <p className="mt-2 font-display text-5xl font-extrabold">€{SERVICE_FEE_EUR}</p>
             <p className="mt-2 text-muted-foreground">Charged only after a slot is held for you. Requires a connected MyRoadSafety account; booking is not guaranteed.</p>
           </div>
         </div>

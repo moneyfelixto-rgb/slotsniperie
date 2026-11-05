@@ -15,6 +15,20 @@
       "when": 1793625112705,
       "tag": "0001_booking_worker_signals",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793700000000,
+      "tag": "0002_active_slot_unique",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793876003983,
+      "tag": "0003_migration",
+      "breakpoints": true
     }
   ]
 }
